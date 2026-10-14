@@ -1,39 +1,31 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Models\Product;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\InventoryTransactionController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ProfileController;
 
-// Redirect root URL to Login
+
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('welcome');
 });
 
-// Protected Routes (Authentication Required)
+// Authenticated & Protected Routes
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    // Dashboard Route with Analytics & Data
-    Route::get('/dashboard', function () {
-        $recentProducts = Product::latest()->take(5)->get();
-        $totalProducts = Product::count();
-        $lowStockCount = Product::whereColumn('quantity', '<=', 'reorder_level')
-                                ->where('quantity', '>', 0)
-                                ->count();
-        $outOfStockCount = Product::where('quantity', '<=', 0)->count();
-        $totalValue = Product::selectRaw('SUM(quantity * unit_price) as total')->value('total') ?? 0;
+    // Dashboard Route
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        return view('dashboard', compact(
-            'recentProducts', 
-            'totalProducts', 
-            'lowStockCount', 
-            'outOfStockCount', 
-            'totalValue'
-        ));
-    })->name('dashboard');
-
-    // Product Inventory Resource Routes (CRUD)
+    // Products Resource Routes
     Route::resource('products', ProductController::class);
+
+    // Transactions Resource Routes
+    Route::resource('transactions', InventoryTransactionController::class);
+
+    // Reports Route (Dito naka-fix ang [reports.index] error)
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
     // Profile Routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -11,33 +11,64 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'sku',
         'description',
-        'category',
+        'sku',
         'quantity',
         'reorder_level',
-        'unit_price',
-        'supplier',
+        'price',
     ];
 
-    protected $casts = [
-        'unit_price' => 'decimal:2',
-        'quantity' => 'integer',
-        'reorder_level' => 'integer',
-    ];
-
-    public function isLowStock(): bool
+    public function transactions()
     {
-        return $this->quantity <= $this->reorder_level && $this->quantity > 0;
+        return $this->hasMany(InventoryTransaction::class);
     }
 
-    public function isOutOfStock(): bool
+
+    public function latestTransaction()
+    {
+        return $this->hasOne(InventoryTransaction::class)->latest();
+    }
+
+
+    public function isLowStock()
+    {
+        return $this->quantity <= $this->reorder_level;
+    }
+
+    public function isOutOfStock()
     {
         return $this->quantity <= 0;
     }
 
-    public function getTotalValueAttribute(): float
+    public function getStockStatusAttribute()
     {
-        return $this->quantity * $this->unit_price;
+        if ($this->isOutOfStock()) {
+            return 'Out of Stock';
+        }
+        if ($this->isLowStock()) {
+            return 'Low Stock';
+        }
+        return 'In Stock';
+    }
+
+    public function getStockStatusColorAttribute()
+    {
+        if ($this->isOutOfStock()) {
+            return 'danger';
+        }
+        if ($this->isLowStock()) {
+            return 'warning';
+        }
+        return 'success';
+    }
+
+    public function scopeLowStock($query)
+    {
+        return $query->whereColumn('quantity', '<=', 'reorder_level');
+    }
+
+    public function scopeOutOfStock($query)
+    {
+        return $query->where('quantity', '<=', 0);
     }
 }
