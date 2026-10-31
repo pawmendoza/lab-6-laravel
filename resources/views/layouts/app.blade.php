@@ -30,6 +30,9 @@
                             <a href="{{ route('products.index') }}" class="px-3 py-1.5 rounded-md text-sm font-medium {{ request()->routeIs('products.*') ? 'bg-emerald-950 text-white shadow-inner' : 'text-emerald-100 hover:bg-emerald-800' }} transition">
                                 Inventory List
                             </a>
+                            <a href="{{ route('transactions.index') }}" class="px-3 py-1.5 rounded-md text-sm font-medium {{ request()->routeIs('transactions.*') ? 'bg-emerald-950 text-white shadow-inner' : 'text-emerald-100 hover:bg-emerald-800' }} transition">
+                                Transactions
+                            </a>
                         </div>
                     </div>
 

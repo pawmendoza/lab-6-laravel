@@ -112,4 +112,18 @@
             </div>
         </div>
     </div>
+
+    <!-- Responsive Navigation Menu (Mobile) -->
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-emerald-900 px-4 pt-2 pb-3 space-y-1">
+        <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-emerald-800">Dashboard</a>
+        <a href="{{ route('products.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-emerald-800">Inventory List</a>
+        <a href="{{ route('transactions.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-emerald-800">Transactions</a>
+        <a href="{{ route('profile.edit') }}" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-emerald-800">Profile</a>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-emerald-800">
+                Log Out
+            </button>
+        </form>
+    </div>
 </nav>
